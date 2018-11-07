@@ -1501,8 +1501,17 @@
 
           eventClass = calEvent.id ? 'wc-cal-event' : 'wc-cal-event wc-new-cal-event';
           eventHtml = '<div class=\"' + eventClass + ' ui-corner-all\">';
-          eventHtml += '<div class=\"wc-time ui-corner-top\"></div>';
-          eventHtml += '<div class=\"wc-title\"></div></div>';
+          switch (options.eventTemplateType) {
+            case 'title-time':
+              eventHtml += '<div class=\"wc-title drag-handle\"></div>';  
+              eventHtml += '<div class=\"wc-time ui-corner-top\"></div>';
+              break;
+            case 'time-title':
+            default:
+              eventHtml += '<div class=\"wc-time ui-corner-top drag-handle\"></div>';
+              eventHtml += '<div class=\"wc-title\"></div>';
+          }
+          eventHtml += '</div>';
 
           $weekDay.each(function() {
             var $calEvent = $(eventHtml);
@@ -1787,7 +1796,7 @@
         var options = this.options;
 
         $calEvent.draggable({
-          handle: '.wc-time',
+          handle: '.drag-handle',
           containment: 'div.wc-time-slots',
           snap: '.wc-day-column-inner',
           snapMode: 'inner',
