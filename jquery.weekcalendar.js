@@ -72,6 +72,7 @@
         readonly: false,
         allowEventCreation: true,
         hourLine: false,
+        eventTemplateType: 'time-title',
         deletable: function(calEvent, element) {
           return true;
         },
@@ -1793,6 +1794,7 @@
        * Add draggable capabilities to an event
        */
       _addDraggableToCalEvent: function(calEvent, $calEvent) {
+        var self = this;
         var options = this.options;
 
         $calEvent.draggable({
@@ -1807,6 +1809,23 @@
           start: function(event, ui) {
             var $calEvent = ui.draggable || ui.helper;
             options.eventDrag(calEvent, $calEvent);
+            $(this).css({
+              'opacity':0.3
+            });
+          },
+          drag: function(event, ui) {
+            var $calEventHelper = ui.helper;
+            var $weekDay = $calEventHelper.data('droppable-over');
+            var top = Math.round(parseInt(ui.position.top));
+            var eventDuration = self._getEventDurationFromPositionedEventElement($weekDay, $calEventHelper, top);
+            calEvent.start = eventDuration.start;
+            calEvent.end = eventDuration.end;
+            self._refreshEventDetails(calEvent, $calEventHelper);
+          },
+          helper: function() {
+            var $helper = $(this).clone();
+            $helper.data('calEvent', $(this).data('calEvent'));
+            return $helper;
           }
         });
       },
@@ -1819,6 +1838,9 @@
           var options = this.options;
           $weekDay.droppable({
             accept: '.wc-cal-event',
+            over: function(event, ui) {
+              ui.helper.data('droppable-over', $(this));
+            },
             drop: function(event, ui) {
                 var $calEvent = ui.draggable;
                 var top = Math.round(parseInt(ui.position.top));
