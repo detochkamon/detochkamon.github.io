@@ -49,6 +49,9 @@
       border: 1px solid #aad;
       width: 270px;
     }
+    .main-container {
+      display:flex;
+    }
   </style>
 
   <script type='text/javascript' src='libs/jquery-1.4.4.min.js'></script>
@@ -217,6 +220,14 @@
       });
 
       updateMessage();
+      
+      $("#weekPicker").datepicker($.extend({
+        onSelect:function(a, b) {
+          //get date in ISO format
+          var formattedDate = $.datepicker.formatDate( "yy-mm-dd", new Date( b.selectedYear, b.selectedMonth, b.selectedDay ) );
+          $calendar.weekCalendar('gotoWeek', formattedDate);
+        }
+      }, $.datepicker.regional[ "fr" ]));
     });
   })(jQuery);
   </script>
@@ -240,6 +251,13 @@
     </select>
   </div>
 
-  <div id="calendar"></div>
+  <div class="main-container">
+    <div class="week-picker-container">
+      <div id="weekPicker"></div>
+    </div>
+    <div class="calendar-container">
+      <div id="calendar"></div>
+    </div>
+  </div>
 </body>
 </html>
